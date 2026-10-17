@@ -63,7 +63,7 @@ endpoints:
         timezone: {type: string, required: false, note: "IANA time zone of the business"}
         connect_when: {type: string, required: false, max: 300, note: "when to ring the user and patch them in, e.g. \"as soon as a person picks up\""}
         listen_in: {type: boolean, required: false, note: "ring the user to listen in from pickup"}
-        max_minutes: {type: integer, required: false, min: 1, note: "cap on the answered call; credits for it are held up front", example: 1}
+        max_minutes: {type: integer, required: false, min: 1, note: "soft cap on the answered call; credits for it are held up front, and a call still talking at the cap holds 2 more minutes", example: 1}
         voice: {type: string, required: false, enum: [marin, cedar, gleam, meridian, vesper, willow]}
         caller_name: {type: string, required: false, max: 30}
         calling_as: {type: string, required: false, max: 80, note: "a company the caller calls from"}
@@ -82,7 +82,7 @@ endpoints:
       source_url: https://call4.me
       checked: '2026-10-16'
       confidence: verified
-      note: "$0.25 per answered minute in the US, Canada and Europe, rounded up, counted from pickup by a person or phone menu; hold time half price; unanswered calls free. Other countries: GET /api/balance price_per_minute_by_country. A call never bills past the credits held for max_minutes. Observed 2026-10-16: the test call (NIST's public talking clock, max_minutes 1) ran just over a minute and charged 25 cents (cost_cents 25; ledger hold 25, release 25, call -25)."
+      note: "$0.25 per answered minute in the US, Canada and Europe, rounded up, counted from pickup by a person or phone menu; hold time half price; unanswered calls free. Other countries: GET /api/balance price_per_minute_by_country. max_minutes is a soft cap: a call still mid-conversation when it comes up holds 2 more minutes (15 more if on hold) while the balance covers them, up to 4 hours; it never bills past what was held. Observed 2026-10-16 on NIST's public talking clock with max_minutes 1: two runs charged 25 cents (cost_cents 25; ledger hold 25, release 25, call -25), a third ran about 3 minutes and charged 50 cents."
     docs_url: https://call4.me/api/openapi.json
 
   - id: call4me.phone.call.get
